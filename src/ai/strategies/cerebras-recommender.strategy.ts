@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import Cerebras from '@cerebras/cerebras_cloud_sdk';
 import { IAiRecommender, RecommendationResult } from '../interfaces/ai-recommender.interface';
@@ -38,7 +38,7 @@ export class CerebrasRecommenderStrategy implements IAiRecommender {
     try {
       const response = await this.client.chat.completions.create({
         messages: [{ role: 'user', content: prompt }],
-        model: 'llama3.1-8b', // Using a default Cerebras model, adjust if needed
+        model: 'gpt-oss-120b', // Using a default Cerebras model, adjust if needed
         temperature: 0.2, // Low temperature for more deterministic output
       });
 
@@ -55,7 +55,7 @@ export class CerebrasRecommenderStrategy implements IAiRecommender {
       return parsed.slice(0, limit);
     } catch (error) {
       console.error('Error fetching recommendations from Cerebras:', error);
-      throw new InternalServerErrorException('Failed to generate AI recommendations');
+      throw error;
     }
   }
 }
