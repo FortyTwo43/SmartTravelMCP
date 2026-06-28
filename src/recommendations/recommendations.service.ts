@@ -15,6 +15,24 @@ export class RecommendationsService {
   async generateDailyRecommendations(id_perfil: string) {
     const supabase = this.supabaseService.getClient();
 
+    // 0. Verificar si ya existen recomendaciones para hoy (comparando solo el día)
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date();
+    todayEnd.setHours(23, 59, 59, 999);
+
+    const { data: existingRecommendations, error: existingError } = await supabase
+      .from('recomendacion')
+      .select('*')
+      .eq('id_perfil', id_perfil)
+      .gte('fecha_generada', todayStart.toISOString())
+      .lte('fecha_generada', todayEnd.toISOString());
+
+    if (!existingError && existingRecommendations && existingRecommendations.length > 0) {
+      // Ya hay recomendaciones de hoy, las retornamos sin llamar a la IA
+      return existingRecommendations;
+    }
+
     // 1. Obtener los intereses del usuario
     const { data: perfilViajero, error: perfilError } = await supabase
       .from('perfil_viajero')
@@ -53,9 +71,9 @@ export class RecommendationsService {
     const recommendations = await this.aiRecommender.getRecommendations(interesesArray, candidatos, 6);
 
     // 4. Guardar las recomendaciones en la base de datos
-    // user wants to keep old recommendations, so we just insert the new ones.
+    // Las recomendaciones antiguas se conservan en el historial (se identifican por fecha_generada)
     const recordsToInsert = recommendations.map((rec) => ({
-      id: crypto.randomUUID(), // Assuming Node 19+ or available polyfill
+      id: crypto.randomUUID(),
       id_perfil: id_perfil,
       id_destino: rec.id_destino,
       motivo: rec.motivo,
