@@ -203,5 +203,5 @@ servicio_reservable ||--o{ detalle_itinerario : pertenece
 
 servicio_reservable ||--o{ reserva : genera
 
-establecimiento_turistico ||--o{ recomendacion : recomendado
+destino ||--o{ recomendacion : recomendado
 ```
