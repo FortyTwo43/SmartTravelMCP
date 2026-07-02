@@ -2,7 +2,7 @@ import { Injectable, Inject, NotFoundException, InternalServerErrorException } f
 import { SupabaseService } from '../supabase/supabase.service';
 import { AI_RECOMMENDER_TOKEN } from '../ai/interfaces/ai-recommender.interface';
 import type { IAiRecommender } from '../ai/interfaces/ai-recommender.interface';
-import { v4 as uuidv4 } from 'uuid'; // need to import or use crypto.randomUUID
+// import { v4 as uuidv4 } from 'uuid'; // need to import or use crypto.randomUUID
 
 @Injectable()
 export class RecommendationsService {
