@@ -6,7 +6,7 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:4200',
-      'https://smart-travel-dun.vercel.app/'
+      'https://smart-travel-dun.vercel.app'
     ],
     credentials: true,
   });
